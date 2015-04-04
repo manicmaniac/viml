@@ -1,0 +1,45 @@
+#!/bin/sh
+banner='viml - Vim script interpreter
+
+Usage:
+    viml [-h | --help]
+    viml [-v | --version]
+    viml
+    viml <FILE>
+    viml -e <SCRIPT>
+
+Options:
+    -h --help     show this screen and exit
+    -v --version  show version and exit
+    -e <SCRIPT>   evaluate <SCRIPT>
+'
+version='0.1.0'
+
+if [ $# -eq 0 ]; then
+    vim -nNesc -
+fi
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        -h | --help)
+            printf "$banner"
+            exit 1
+            ;;
+        -v | --version)
+            echo "$version"
+            exit 1
+            ;;
+        -e)
+            shift
+            (echo "$*" | sed -e 's/echo/verbose echo/g'; echo 'quit') | vim -nNesc -
+            echo
+            exit 0
+            ;;
+        *)
+            vim -nNesS "$@" -c 'quit'
+            exit 0
+            ;;
+    esac
+done
+
